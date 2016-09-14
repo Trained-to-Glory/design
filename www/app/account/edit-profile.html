@@ -12,7 +12,7 @@
         <div class="header edit">
             <!-- <img ng-src="{{user.photo}}" ng-click="sendPhoto()"> -->
             <div ng-if="profile.photo" >
-              <img class="header__thumb" src = "{{ profile.photo }}">
+              <img class="header__thumb" src = "{{ profile.photo }}" ng-click="uploadUserPhoto()">
             </div>
             <div ng-if="!profile.photo">
               <img src="https://unsplash.it/200/300?image=770" alt="" ng-click="uploadUserPhoto()">

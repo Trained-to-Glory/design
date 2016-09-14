@@ -1,7 +1,7 @@
 angular.module('module.view.rather', [])
-	.controller('ratherCtrl', function($scope,$rootScope,$state,interestService,userInterestService) {
+	.controller('ratherCtrl', function($scope,$rootScope,$state,interestService,userInterestService,$localStorage, engagementService) {
 		$scope.data = {};
-
+		interestService.createInterestList();
 		console.log('prevScope', $state.prevScope);
 		$scope.data.editProfile = $state.prevScope == 'user' ? true : false;
 
@@ -28,41 +28,37 @@ angular.module('module.view.rather', [])
 			};
 
 			$scope.getInterest().then(function(results) {
-				var intresets = [];
-				for (key in results) {
-					intresets.push({
+				var interests = [];
+				for (key in results){
+					interests.push({
 						id: key,
 						label: results[key].displayName
 					});
 				}
-				$scope.data.interests = intresets;
+				$scope.interests = interests;
 			});
 
+			$scope.isChecked = false;
+		    $scope.selected = [];
+		    $scope.checkedOrNot = function (interest, isChecked, index) {
+						console.log('selected hit');
+						console.log('args',arguments);
+		        if (isChecked) {
+		            $scope.selected.push(interest);
+								engagementService.engagedActivities('interest', interest.id, $localStorage.account.userId);
+								console.log($scope.selected.push);
+								console.log(interest);
+		        } else {
+		            var _index = $scope.selected.indexOf(interest);
+		            $scope.selected.splice(_index, 1);
+								engagementService.disEngagedActivities('interest', interest.id, $localStorage.account.userId);
+		        }
+						console.log($scope.selected);
+						console.log('the value of: ', interest);
+						//$scope.selected.push($localStorage.account);
 
-        //   $scope.getInterest = function(id){
-        //     return interestService.getInterest(id);
-        // };
+		    };
 
-        //   $scope.createUserInterest = function(interestId,userId){
-        //     return userInterestService.createUserInterest(interestId,userId);
-        // };
 
-        // $scope.isChecked = function(interestId, userId){
-        //     console.log({interestId: interestId, userId: userId});
-        //     return userInterestService.checkUserInterestExists(interestId,userId);
-        //   };
-
-        //   $scope.manageUserInterest = function(evt, interestId, userId){
-        //     console.log(evt);
-        //     var element = evt.target || evt.srcElement;
-        //     var checked = element.checked;
-        //     return userInterestService.manageUserInterest(interestId,userId,checked);
-        //   };
-
-        //  $scope.comm = {
-        //   items: $scope.getInterest(),
-        //   manage: $scope.manageUserInterest,
-        //   isChecked: $scope.isChecked
-        //  };
 
 });

@@ -1,48 +1,45 @@
 angular.module('module.view.friend', [])
-	.controller('friendCtrl', function($scope,$rootScope,$state,partnersService,postService) {
+	.controller('friendCtrl', function($scope,$rootScope,$state,partnersService,postService, usersService) {
+
+		usersService.get();
 		$scope.goBack = function (ui_sref) {
-                    var currentView = $ionicHistory.currentView();
-                    var backView = $ionicHistory.backView();
+          var currentView = $ionicHistory.currentView();
+          var backView = $ionicHistory.backView();
+          if (backView) {
+              //there is a back view, go to it
+              if (currentView.stateName == backView.stateName) {
+                  //if not works try to go doubleBack
+                  var doubleBackView = $ionicHistory.getViewById(backView.backViewId);
+                  $state.go(doubleBackView.stateName, doubleBackView.stateParams);
+              } else {
+                  backView.go();
+              }
+          } else {
+              $state.go(ui_sref);
+          }
+      }
 
-                    if (backView) {
-                        //there is a back view, go to it
-                        if (currentView.stateName == backView.stateName) {
-                            //if not works try to go doubleBack
-                            var doubleBackView = $ionicHistory.getViewById(backView.backViewId);
-                            $state.go(doubleBackView.stateName, doubleBackView.stateParams);
-                        } else {
-                            backView.go();
-                        }
-                    } else {
-                        $state.go(ui_sref);
-                    }
-                }
+    $scope.contacts = partnersService.getContacts();
 
-        $scope.contacts = partnersService.getContacts();
+    $scope.news = {
+        type: 'image',
+        items: postService.getNews()
+    }
 
-        $scope.news = {
-            type: 'image',
-            items: postService.getNews()
-        }
 
-                
 		$scope.profile = { type: 1 };
 
 		$scope.gotoAccounts = function () {
-                    $state.go('tabs.account');
-                   
+            $state.go('tabs.account');
         };
 
-       $scope.gotoBrowse = function () {
-                    $state.go('tabs.news');
-                   
-        };
+     $scope.gotoBrowse = function () {
+          	$state.go('tabs.news');
+      };
 
-        $scope.gotoCoaches = function () {
-                    $state.go('tabs.coach');
-           
-        };
-
+      $scope.gotoCoaches = function () {
+            $state.go('tabs.coach');
+      };
 
 });
 

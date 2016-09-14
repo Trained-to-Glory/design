@@ -1,5 +1,5 @@
 angular.module('module.view.reminders', [])
-	.controller('remindersCtrl', function($scope,$rootScope,$state,engagementsService,$ionicPopover,$ionicModal) {
+	.controller('remindersCtrl', function($scope,$rootScope,$state,appService,$ionicPopover,$ionicModal) {
 		$scope.goBack = function (ui_sref) {
                     var currentView = $ionicHistory.currentView();
                     var backView = $ionicHistory.backView();
@@ -17,9 +17,12 @@ angular.module('module.view.reminders', [])
                         $state.go(ui_sref);
                     }
                 }
+
+				appointmentsService.get($stateParams)
+
         $scope.viewDate = new Date();
                 $scope.notifyTimes = ['at set time', '15 mins before', '30 mins before', '45 mins before', 'an hour before'];
-                $scope.notifications = engagementsService.getNotifications();
+                $scope.notifications = appService.getNotifications();
                 getDateEvents(moment($scope.viewDate._d).startOf('day')._d);
 
                 $scope.decrementDate = function (item) {
@@ -82,7 +85,7 @@ angular.module('module.view.reminders', [])
                             $rootScope.notifications.splice($rootScope.notifications.indexOf(_.find($rootScope.notifications, function (obj) { return obj == $stateParams.reminder })), 1, $scope.reminder);
                         }
                     } else {
-                        engagementsService.showAlert('Form Invalid', '<p class="text-center">A title and start date is required</p>', 'Ok', 'button-assertive', null);
+                        appSersService.showAlert('Form Invalid', '<p class="text-center">A title and start date is required</p>', 'Ok', 'button-assertive', null);
                     }
 
                 }

@@ -1,6 +1,6 @@
 angular.module('service.appointments', [])
- .service('appointmentsService', function(){
-   var table = 'activities';
+ .service('appointmentsService', function($localStorage){
+   var table = 'appointments';
         var get = function (id) {
             var refId = (id) ? [table, id].join('/'): table;
             var db = firebase.database().ref(refId);
@@ -16,21 +16,23 @@ angular.module('service.appointments', [])
         var create = function (data) {
             //create a location in the table
             var obj = {
-                "description": data.description,
+                "notes": data.notes,
+                "startAt": data.startAt,
+                "allDay": data.allDay,
+                "title": data.title,
+                "phone": data.phone,
+                "endAt": data.endAt,
+                "location": data.location,
                 "created": firebase.database.ServerValue.TIMESTAMP,
                 "createdBy": $localStorage.account.userId,
-                "owner": $localStorage.account.userName,
-                "location": data.location,
-                "time": data.time,
-                "date": data.date,
-                "postType": data.postType,
+                "type": data.type,
                 "state": {
                     "actionable": true,
                     "visible": true,
                     "active": true
                 }
             };
-
+            console.log(obj);
             var db = firebase.database().ref(table);
             var key = db.push(obj).key;
             return key;
@@ -45,24 +47,24 @@ angular.module('service.appointments', [])
             return db.once('value').then(function (snapshot) {
                 var currentObj = snapshot.val();
                 if (currentObj) {
-                    var obj = {
-                        "typeId": data.postTypeId ? data.postTypeId : currentObj.postTypeId,
-                        "activityId": data.activityId ? data.activityId : currentObj.activityId,
-                        "description": data.description ? data.description : currentObj.description,
-                        "location": data.location ? data.location : currentObj.location,
-                        "filePath": data.filePath ? data.filePath : currentObj.filePath,
-                        "time": data.time ? data.time : currentObj.time,
-                        "date": data.date ? data.date : currentObj.date,
-                        "postType": data.postType ? data.postType : currentObj.postType,
-                        "created": data.created ? data.created : currentObj.created,
-                        "lastModified": firebase.database.ServerValue.TIMESTAMP,
-                        "createdBy": data.createdBy ? data.createdBy : currentObj.createdBy,
-                        "state": {
-                            "actionable": actionable ? actionable : currentObj.actionable,
-                            "visible": visible ? visible : currentObj.visible,
-                            "active": active ? active : currentObj.active
-                        }
-                    };
+                  var obj = {
+                      "notes": data.notes ? data.notes : currentObj.notes,
+                      "startAt": data.startAt ? data.startAt : currentObj.startAt,
+                      "type": data.type ? data.type : currentObj.type,
+                      "allDay": data.allDay ? data.allDay : currentObj.allDay,
+                      "title": data.title ? data.title : currentObj.title,
+                      "phone": data.phone ? data.phone : currentObj.phone,
+                      "endAt": data.endAt ? data.endAt : currentObj.endAt,
+                      "location": data.location ? data.location : currentObj.location,
+                      "created": firebase.database.ServerValue.TIMESTAMP ? data.notes : currentObj.notes,
+                      "lastModified": firebase.database.ServerValue.TIMESTAMP,
+                      "createdBy": data.createdBy ? data.createdBy : currentObj.createdBy,
+                      "state": {
+                        "actionable": actionable ? actionable : currentObj.actionable,
+                        "visible": visible ? visible : currentObj.visible,
+                        "active": active ? active : currentObj.active
+                      }
+                  };
                     return db.update(obj);
                 }
                 return null;

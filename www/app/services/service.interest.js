@@ -2,12 +2,7 @@ angular.module('service.interest', ['firebase'])
  .service('interestService',function() {
    this.createInterestList = function(userId){
 	    var data = {
-	           "displayName": "Baseball",
-	           "states": {
-	             "actionable": true,
-	             "read": true,
-	             "write": true
-	           }
+	           "displayName": "Baseball"
 	    };
 
 	    var ref = firebase.database().ref('interest');
@@ -18,12 +13,7 @@ angular.module('service.interest', ['firebase'])
 	              'Paintball','Pool','Skate','Soccer','Tennis','Weight Lifting', 'Yoga'];
 	    for(var i = 0; i < interests.length; i++){
   	      data = {
-  	           "displayName": interests[i],
-  	           "states": {
-  	             "actionable": true,
-  	             "read": true,
-  	             "write": true
-  	           }
+  	           "displayName": interests[i]
   	      };
   	      key = ref.push().key;
   	      ref.child(key).set(data);

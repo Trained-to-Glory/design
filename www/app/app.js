@@ -1,23 +1,6 @@
 
-angular.module('full_starter', ['ionic','ngStorage', 'ionic.cloud', 'ngCordovaOauth', 'ngCordova', 'full_starter.controllers', 'full_starter.routes', 'full_starter.services', 'full_starter.directives','full_starter.factory'])
+angular.module('full_starter', ['ionic','ngStorage', 'ngCordovaOauth', 'ngCordova', 'full_starter.controllers', 'full_starter.routes', 'full_starter.services', 'full_starter.directives','full_starter.factory'])
 
-  // $ionicCloudProvider.init({
-  //   "core": {
-  //     "app_id": "e77285d3"
-  //   },
-  //   "push": {
-  //     "sender_id": "SENDER_ID",
-  //     "pluginConfig": {
-  //       "ios": {
-  //         "badge": true,
-  //         "sound": true
-  //       },
-  //       "android": {
-  //         "iconColor": "#343434"
-  //       }
-  //     }
-  //   }
-  // });
   //Constants for the Popup messages
   //For the icons, refer to http://ionicons.com for all icons.
   //Here you can edit the success and error messages on the popups.
@@ -49,22 +32,6 @@ angular.module('full_starter', ['ionic','ngStorage', 'ionic.cloud', 'ngCordovaOa
 
   .run(function ($ionicPlatform, appService) {
 
-    // $rootScope.$on('$stateChangeStart', function(event, toState, toParams){
-    //   event.preventDefault();
-    //   if(authService){
-    //     console.log(typeof(onAuthStateChanged));
-    //    authService.googleAuth().onAuthStateChanged(function(user){
-    //       if(user){
-    //           console.log('logged in');
-    //           console.log(user);
-    //           $state.go(toState.name, toParams);
-    //           return;
-    //       }
-    //       $state.go('authentication');
-    //     });
-    //   }
-    // });
-
     $ionicPlatform.ready(function ($scope,$on) {
 
       if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -77,9 +44,5 @@ angular.module('full_starter', ['ionic','ngStorage', 'ionic.cloud', 'ngCordovaOa
         StatusBar.styleDefault();
       }
 
-      $scope.$on('cloud:push:notification', function(event, data) {
-        var msg = data.message;
-        alert(msg.title + ': ' + msg.text);
-      });
     });
   })

@@ -205,6 +205,26 @@ angular.module('service.engagements', [])
             return updateEngagement(type, category, categoryId, undefined, userId, comment);
         };
 
+        this.create = function (category, categoryId, userId, comment) {
+            var type = 'engagementComments';
+            //check if engagement item is already in hash
+            return updateEngagement(type, category, categoryId, undefined, userId, comment);
+        };
+
+        this.engagedActivities = function (category, categoryId, userId) {
+            var type = 'engagedActivities';
+            console.log('engagedActivities called');
+            //check if engagement item is already in hash
+            return updateEngagement(type, category, categoryId, userId, true);
+        };
+
+        this.disEngagedActivities = function (category, categoryId, userId) {
+            var type = 'engagedActivities';
+            console.log('disEngagedActivities called');
+            //check if engagement item is already in hash
+            return updateEngagement(type, category, categoryId, userId, false);
+        };
+
         this.updateComment = function (category, categoryId, itemId, comment) {
             var type = 'engagementComments';
             //check if engagement item is already in hash

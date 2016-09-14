@@ -141,6 +141,10 @@ angular.module('module.view.news', [])
             return postService.delete(id);
         };
 
+        $scope.select = function(id){
+            return userInterestService.select(id);
+        };
+
         $scope.update = function (data) {
             return postService.update(data);
         };
@@ -157,6 +161,7 @@ angular.module('module.view.news', [])
               type: 'image',
               items: results
           };
+          console.log(news);
           for(var id in news.items){
             //check to see if there is a like on this post
             console.log({postId: engagementService.liked('post', id, $localStorage.account.userId)});

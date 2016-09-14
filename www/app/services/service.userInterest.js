@@ -3,6 +3,11 @@ angular.module('service.userInterest', [])
    this.createInterestList = function(userId){
 	    var data = {
 	           "displayName": "Baseball",
+	           "states": {
+	             "actionable": true,
+	             "read": true,
+	             "write": true
+	           }
 	    };
 
 	    var ref = firebase.database().ref('userInterest');
@@ -14,14 +19,23 @@ angular.module('service.userInterest', [])
 	    for(var i = 0; i < interests.length; i++){
 	      data = {
 	           "displayName": interests[i],
-             "interests": [
-               '-KRGM6aHQdsXNqMa-28d'
-             ],
+             "states": {
+	             "actionable": true,
+	             "read": true,
+	             "write": true
+	           },
+
 	      };
 	      key = ref.push().key;
 	      ref.child(key).update(data);
     }
 	    return;
 	  };
+
+    this.select = function(id){
+      console.log('in select interest');
+      var userIntresets = firebase.database().ref('userInterest/' + id);
+      userInterest.push();
+    };
 
 });

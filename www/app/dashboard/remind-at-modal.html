@@ -7,11 +7,12 @@
             <span class="icon ion-android-close" ng-click="closeRemindAt()"></span>
         </div>
     </div>
-        
+
     <ion-content class="has-header">
         <ion-list>
-            <ion-checkbox ng-repeat="item in notifyTimes" ng-checked="reminder.remindTime[$index] === item" ng-click="notifyCheck($index, item)"><span style="text-transform: capitalise;">{{item}}</span></ion-checkbox>
+            <ion-checkbox ng-repeat="item in notifyTimes track by $index"
+             ng-checked="reminder.remindTime[$index] === item" ng-model="isChecked"  ng-change="checkedOrNot(item, isChecked, $index)" ng-init='isChecked=false'><span style="text-transform: capitalise;">{{item}}</span></ion-checkbox>
         </ion-list>
     </ion-content>
-    
+
 </ion-modal-view>

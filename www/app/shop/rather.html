@@ -8,10 +8,8 @@
 
     <ion-content class="has-header padding bg-lightgrey">
         <ion-list>
-          <div ng-repeat="interest in data.interests">
-            <ion-checkbox style="color: #F10707;background: transparent;border-color: transparent" data-interest-id="{{ interest.id }}">{{ interest.label }}</ion-checkbox>
-          </div>
-
+            <ion-checkbox ng-repeat="interest in interests track by $index" style="color: #F10707;background: transparent;border-color: transparent"
+              data-interest-id="{{ interest.id }}" ng-model="isChecked"  ng-change="checkedOrNot(interest, isChecked, $index, $localStorage)" ng-init='isChecked=false'>{{ interest.label }}</ion-checkbox>
          </ion-list>
 
          <div class="row row-login">
