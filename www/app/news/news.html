@@ -17,8 +17,6 @@
         </div>
 
         <div style="height:95%; overflow:scroll" class="bg-lightgrey">
-            <script>
-            </script>
             <div ng-if="news.type === 'image'">
                 <div class="card image" ng-repeat="(key, value) in news.items" ng-if="value.state.visible === true">
                     <div class="item item-image">

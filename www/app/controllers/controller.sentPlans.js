@@ -1,5 +1,5 @@
 angular.module('module.view.sentPlans', [])
-	.controller('sentPlansCtrl', function($scope,$rootScope,$state,$ionicPopover,engagementsService,postService,conversationService,$ionicScrollDelegate) {
+	.controller('sentPlansCtrl', function($scope,$rootScope,$state,$localStorage, $ionicPopover,appService,postService, engagementService,conversationService,$ionicScrollDelegate) {
 		$scope.goBack = function (ui_sref) {
                     var currentView = $ionicHistory.currentView();
                     var backView = $ionicHistory.backView();
@@ -122,6 +122,14 @@ angular.module('module.view.sentPlans', [])
                     });
                 };
 
+								$scope.plansPopover = $ionicPopover.fromTemplate(plansTemplate, {
+										scope: $scope
+								});
+
+								$scope.createPlan = function () {
+				            $state.go('tabs.create-plan');
+				        };
+
                 $scope.sendPhoto = function () {
                     var message = {
                         sentAt: new Date(),
@@ -146,7 +154,7 @@ angular.module('module.view.sentPlans', [])
                                                 viewScroll.scrollBottom(true);
                                             }, 0);
                                         }, function (err) {
-                                            engagementsService.showAlert('Error', err, 'Close', 'button-assertive', null);
+                                            appService.showAlert('Error', err, 'Close', 'button-assertive', null);
                                         });
                                     }, false);
                                     break;
@@ -159,7 +167,7 @@ angular.module('module.view.sentPlans', [])
                                                 viewScroll.scrollBottom(true);
                                             }, 0);
                                         }, function (err) {
-                                            engagementsService.showAlert('Error', err, 'Close', 'button-assertive', null);
+                                            appService.showAlert('Error', err, 'Close', 'button-assertive', null);
                                         });
                                     }, false);
                                     break;
@@ -185,6 +193,47 @@ angular.module('module.view.sentPlans', [])
                     scroller.style.bottom = newFooterHeight + 'px';
                 });
 
+								postService.getPlans().then(function(results) {
+				          //create a local object so we can create the datastructure we want
+				          //so we can use it to show/hide, toggle ui items
+				          var news = {
+				              type: 'image',
+				              items: results
+				          };
+				          console.log('results',results);
+				          var data;
+				          console.log(news);
+				          for(var id in news.items){
+				            //check to see if there is a like on this post
+				            //console.log({postId: engagementService.liked('post', id, $localStorage.account.userId)});
+				            data = {
+				              category: 'post',
+				              categoryId: id,
+				              userId: $localStorage.account.userId
+				            }
+				            engagementService.liked(data).then(function(liked){
+				              news.items[id].liked = liked;
+				            });
+				            engagementService.committed(data).then(function(committed){
+				              news.items[id].committed = committed;
+				            });
+				            engagementService.totalCommits(data).then(function(totalCommits){
+				              news.items[id].totalCommits = totalCommits;
+				            });
+				          }
+				          //make it available to the directive to officially show/hide, toggle
+				          $scope.news = news;
+				        });
+
+								// postService.getSentPlans().then(function(results) {
+				        //   var appointments = {
+				        //       items: results,
+								// 			type: 'plan'
+				        //   };
+								// 	console.log('results',results);
+								// 	console.log('sentPlans',appointments);
+								// });
+
 });
 var searchTemplate =
     '<ion-popover-view class="search">' +
@@ -194,6 +243,16 @@ var searchTemplate =
     '<i class="icon ion-ios-search placeholder-icon"></i>' +
     '<input type="search" placeholder="Search" ng-model="schoolSearch" ng-model-options="{ debounce: 550 }" ng-change="getSearch(schoolSearch)"></label>' +
     ' <i class="icon ion-close" ng-show="schoolSearch" ng-click="getSearch(\'\');popover.hide($event);schoolSearch=\'\'"></i>' +
+    '</div>' +
+    '</ion-content>' +
+    '</ion-popover-view>';
+var plansTemplate =
+    '<ion-popover-view class="medium right">' +
+    '<ion-content>' +
+    '<div class="list">' +
+    '<div class="item item-icon-left item-text-wrap" ng-click="createPlan()">' +
+    '<i class="icon ion-ios-bell-outline"></i>Create Plan' +
+    '</div>' +
     '</div>' +
     '</ion-content>' +
     '</ion-popover-view>';

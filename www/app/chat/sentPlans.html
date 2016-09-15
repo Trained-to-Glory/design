@@ -1,37 +1,31 @@
-<ion-view title="Plans">
-    
-    <ion-nav-back-button></ion-nav-back-button>
-    
+<ion-view title="Plans" cache-view="false">
     <ion-nav-buttons side = "left">
          <button class="button button-icon button-clear button-dark">
             <img src="img/TTG-Symbol-2015-02.png" style="position: relative;top: 2px;height: 29px;left: 5px;">
          </button>
     </ion-nav-buttons>
 
-    <ion-nav-buttons side="right">
-        <button class="button button-icon dark icon ion-ios-search" ng-click="searchPopover.show($event)"></button>
-    </ion-nav-buttons>
-    
-    <ion-content class="has-header">
-        
-        <div class="note note-info padding" style="margin:10px;" ng-if="messages.length === 0">
-            <h2 class="positive">No Messages</h4>
-            <p class="dark">Click on the chat button to start a conversation with a teacher</p>
-        </div>
-        
-        <div class="list">
-            <div class="item item-avatar item-text-wrap"  ng-repeat="item in conversations  | filter: searchFilter " ui-sref="tabs.chat({chat: item})">
+    <ion-content class="has-header" scroll="false">
+        <div style="height:95%; overflow:scroll" class="bg-lightgrey">
+            <div ng-if="news.type === 'image'">
+                <div class="card image" ng-repeat="(key, value) in news.items" ng-if="value.state.visible === true">
+                    <div class="item item-image">
+                        <img ng-src="{{post.image}}">
+                        <div class="item item-avatar" ui-sref="tabs.post-detail({plan:key})">
+                            <img ng-src="{{value.photo}}">
+                            <h2>{{value.title}}</h2>
+                            <p>{{value.description}}</p>
+                            <p>{{value.notes}}</p>
+                            <p>{{ value.time }}</p>
+                        </div>
+                        <i class="icon ion-minus-circled" ng-click="delete(key)"></i>
+                        <i class="icon ion-edit" ui-sref="tabs.create-plan({plan:key, mode:'edit'})"></i>
+                    </div>
+                </div>
+            </div>
 
-                <img ng-src="{{item.recepientphoto}}">
-                <h2 class="lead">{{item.recepientname}}</h2>
-                <p class="text-small" ng-if="item.messages.length">Last Message: {{item.messages[item.messages.length -1].text}}</p>
-                <i class="icon ion-ios-chatboxes-outline calm"><span class="text-smaller"> {{ item.messages.length}} Sent Plans</span></i>
-                <span class="date calm">Sent <span am-time-ago="item.messages[item.messages.length -1].sentAt"></span></span>
         </div>
-        </div>
-        
     </ion-content>
-    
-    <a class="btn-floating btn-large waves-effect waves-light red" style="position:absolute; bottom:5%;right:5%;" ng-click="contactPopover.show($event);"><i class="icons ion-plus"></i></a>
-    
+
+    <a class="btn-floating btn-large waves-effect waves-light red lighten-1" style="position:fixed; bottom:3%;right:5%;z-index:999" ng-click="plansPopover.show($event);"><i class="icons ion-ios-plus" style="color: white"></i></a>
 </ion-view>

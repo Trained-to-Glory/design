@@ -1,5 +1,5 @@
 angular.module('module.view.chat', [])
-	.controller('chatCtrl', function($scope,$rootScope,$state,$localStorage,appService, $ionicActionSheet,$cordovaCamera,$ionicPopover,postService,$ionicLoading,conversationService,engagementsService,$ionicScrollDelegate,$stateParams,$timeout) {
+	.controller('chatCtrl', function($scope,$rootScope,$state,$localStorage,appService, $ionicActionSheet,$cordovaCamera,$ionicPopover,postService,$ionicLoading,conversationService,appService,$ionicScrollDelegate,$stateParams,$timeout) {
 		$scope.goBack = function (ui_sref) {
                     var currentView = $ionicHistory.currentView();
                     var backView = $ionicHistory.backView();

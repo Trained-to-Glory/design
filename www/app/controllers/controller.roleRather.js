@@ -1,7 +1,6 @@
-angular.module('module.view.rather', [])
-	.controller('ratherCtrl', function($scope,$rootScope,$state,interestService,userInterestService,$localStorage, engagementService) {
+angular.module('module.view.roleRather', [])
+	.controller('roleRatherCtrl', function($scope,$rootScope,$state,interestService,userInterestService,$localStorage, engagementService) {
 		$scope.data = {};
-		interestService.createInterestList();
 		console.log('prevScope', $state.prevScope);
 		$scope.data.editProfile = $state.prevScope == 'user' ? true : false;
 
@@ -22,12 +21,12 @@ angular.module('module.view.rather', [])
 					}
 			}
 
-
 			$scope.getInterest = function(id){
 				return interestService.get(id);
 			};
 
 			$scope.getInterest().then(function(results) {
+        console.log('Im here');
 				var interests = [];
 				for (key in results){
 					interests.push({
@@ -43,19 +42,18 @@ angular.module('module.view.rather', [])
 		    $scope.checkedOrNot = function (interest, isChecked, index) {
 		        if (isChecked) {
 		            $scope.selected.push(interest);
-								var data = {
-	                category: 'interest',
-	                interestId: interest.id,
-	                userId: $localStorage.account.userId
-	              }
-								engagementService.engagedActivities(data);
+                var data = {
+                  category: 'trainers',
+                  interestId: interest.id,
+                  userId: $localStorage.account.userId
+                }
+								engagementService.trainerActivities(data);
 		        } else {
 		            var _index = $scope.selected.indexOf(interest);
 		            $scope.selected.splice(_index, 1);
-								engagementService.disEngagedActivities(data);
+								engagementService.removeTrainerActivities(data);
 		        }
 		    };
-
 
 
 });

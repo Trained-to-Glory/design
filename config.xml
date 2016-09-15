@@ -2,21 +2,28 @@
 <widget id="com.ionicframework.trainedtoglory707603" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Trained to Glory</name>
     <description>
-        An Ionic Framework and Cordova project.
+        A Trained To Glory Project
     </description>
-    <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+    <author email="trainedtoglory@gmail.com" href="http://ionicframework.com/">
+      Trained to Glory
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <preference name="webviewbounce" value="false" />
-    <preference name="UIWebViewBounce" value="false" />
-    <preference name="DisallowOverscroll" value="true" />
-    <preference name="SplashScreenDelay" value="2000" />
-    <preference name="FadeSplashScreenDuration" value="2000" />
-    <preference name="android-minSdkVersion" value="16" />
-    <preference name="BackupWebStorage" value="none" />
-    <preference name="SplashScreen" value="screen" />
+    <preference name="permissions"                value="none"/>
+   <!-- Customize your app and platform with the preference element. -->
+   <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
+   <preference name="target-device"              value="universal" />      <!-- all: possible values handset, tablet, or universal -->
+   <preference name="fullscreen"                 value="true" />           <!-- all: hides the status bar at the top of the screen -->
+   <preference name="webviewbounce"              value="true" />           <!-- ios: control whether the screen 'bounces' when scrolled beyond the top -->
+   <preference name="prerendered-icon"           value="true" />           <!-- ios: if icon is prerendered, iOS will not apply it's gloss to the app's icon on the user's home screen -->
+   <preference name="stay-in-webview"            value="false" />          <!-- ios: external links should open in the default browser, 'true' would use the webview the app lives in -->
+   <preference name="ios-statusbarstyle"         value="black-opaque" />   <!-- ios: black-translucent will appear black because the PhoneGap webview doesn't go beneath the status bar -->
+   <preference name="detect-data-types"          value="true" />           <!-- ios: controls whether data types (such as phone no. and dates) are automatically turned into links by the system -->
+   <preference name="exit-on-suspend"            value="false" />          <!-- ios: if set to true, app will terminate when home button is pressed -->
+   <preference name="show-splash-screen-spinner" value="true" />           <!-- ios: if set to false, the spinner won't appear on the splash screen during app loading -->
+   <preference name="auto-hide-splash-screen"    value="true" />           <!-- ios: if set to false, the splash screen must be hidden using a JavaScript API -->
+   <preference name="disable-cursor"             value="false" />          <!-- blackberry: prevents a mouse-icon/cursor from being displayed on the app -->
+   <preference name="android-installLocation"    value="auto" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
@@ -75,6 +82,7 @@
     <allow-intent href="*.firebaseio.com" />
     <allow-intent href="auth.firebase.com" />
     <icon src="resources/ios/icon/icon-small@3x.png" />
+    <plugin name="cordova-plugin-battery-status" />
     <plugin name="cordova-plugin-camera" />
     <plugin name="cordova-plugin-media-capture" />
     <plugin name="cordova-plugin-console" />
@@ -92,13 +100,5 @@
     <plugin name="cordova-plugin-network-information" />
     <plugin name="cordova-plugin-splashscreen" />
     <plugin name="cordova-plugin-vibration" />
-    <plugin name="cordova-plugin-device" spec="~1.1.2" />
-    <plugin name="cordova-plugin-console" spec="~1.0.3" />
-    <plugin name="cordova-plugin-statusbar" spec="~2.1.3" />
-    <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
-    <plugin name="cordova-plugin-splashscreen" spec="~3.2.2" />
-    <plugin name="cordova-plugin-whitelist" spec="~1.2.2" />
-    <plugin name="phonegap-plugin-push" spec="~1.8.1">
-    </plugin>
     <variable name="SENDER_ID" value="778952668094" />
 </widget>

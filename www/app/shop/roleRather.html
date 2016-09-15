@@ -1,0 +1,26 @@
+<ion-view title="Select your interest" cache-view="false">
+
+    <ion-nav-buttons side = "left">
+         <button class="button button-icon button-clear button-dark">
+            <img src="img/TTG-Symbol-2015-02.png" style="position: relative;top: 2px;height: 29px;left: 5px;">
+         </button>
+    </ion-nav-buttons>
+
+    <ion-content class="has-header padding bg-lightgrey">
+        <ion-list>
+            <ion-checkbox ng-repeat="interest in interests track by $index" style="color: #F10707;background: transparent;border-color: transparent"
+              data-interest-id="{{ interest.id }}" ng-model="isChecked"  ng-change="checkedOrNot(interest, isChecked, $index, $localStorage)" ng-init='isChecked=false'>{{ interest.label }}</ion-checkbox>
+         </ion-list>
+
+         <div class="row row-login">
+            <div class="col col-login"></div>
+            <div ng-if="data.editProfile">
+              <div class="col col-login" style="margin-left: 31vh;">SAVE</div>
+            </div>
+            <div ng-if="data.editProfile == false">
+              <div class="col col-login" style="margin-left: 31vh;" ui-sref="tabs.cost">NEXT</div>
+            </div>
+        </div>
+
+    </ion-content>
+</ion-view>

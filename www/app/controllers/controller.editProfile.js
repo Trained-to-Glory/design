@@ -20,54 +20,6 @@ angular.module('module.view.editProfile', [])
                     }
                 };
 
-        // fn change username
-          $scope.changeUsername = function() {
-            showPopup('Change username', preparePopupData('meta', 'username'));
-            myPopup.then(function(newUsername) {
-              if(newUsername != undefined && newUsername != null) {
-                Profile.changeUserName($scope.AuthData.uid, newUsername).then(
-                  function(returnObj){
-                    if(returnObj != "USERNAME_TAKEN") {
-                      loadProfileData();
-                    } else {
-                      $timeout(function(){
-                        $scope.changeUsername();  //reopen
-                      }, 1500)
-                    }
-                  }
-                )
-              }
-            });
-          };
-
-
-        $scope.doChangePassword = function() {
-        if($scope.changePasswordData.userEmail && $scope.changePasswordData.oldPassword && $scope.changePasswordData.newPassword) {
-            Utils.showMessage("Changing password... ");
-            Auth.changePassword(
-                $scope.changePasswordData.userEmail,
-                $scope.changePasswordData.oldPassword,
-                $scope.changePasswordData.newPassword).then(
-                function(AuthData){
-
-                    //
-                    Utils.showMessage("Password Changed!");
-                    //
-                    $scope.loginData = {
-                        userEmail:      $scope.changePasswordData.userEmail,
-                        userPassword:   $scope.changePasswordData.newPassword,
-                    }
-                    $scope.doLogin();
-
-                }, function(error){
-                    Codes.handleError(error)
-                }
-            )
-        } else {
-            Codes.handleError({code: "INVALID_INPUT"})
-        }
-      };
-
 			$scope.uploadUserPhoto = function () {
 						$ionicActionSheet.show({
 								buttons: [{
@@ -129,17 +81,17 @@ angular.module('module.view.editProfile', [])
 					$inputs.map( function(elm) {
 						data[$(this).attr('name')] = $(this).val();
 					});
-					
-					// Password validation 
+
+					// Password validation
 					if (data.oldPassword && data.oldPassword.length && data.newPassword && data.newPassword.length) {
-						if (!validatePassword(data)) { 
+						if (!validatePassword(data)) {
 							$inputs.filter('[type="password"]').val('');
-							return; 
+							return;
 						}
 						// Update Password
 						var user = firebase.auth().currentUser,
 								credential = firebase.auth.EmailAuthProvider.credential($localStorage.account.email, data.oldPassword);
-						
+
 						user.reauthenticate(credential).then(function() {
 							user.updatePassword(data.newPassword).then(
 		              function(){
@@ -165,11 +117,11 @@ angular.module('module.view.editProfile', [])
 							});
 						});
 					}
-					
+
 					if (!validateData(data, $inputs)) {
 						return;
 					}
-					
+
 					// Update DB
 					var ref = firebase.database().ref('accounts');
 					ref.orderByChild('userId').equalTo($localStorage.account.userId).on("child_added", function(snapshot) {
@@ -190,12 +142,12 @@ angular.module('module.view.editProfile', [])
 						});
 					});
 	      };
-				
-				
+
+
         $scope.gotoFriend = function(){
         	$state.go('tabs.account');
         };
-				
+
 				function validateData(data, $inputs) {
 					// TODO: check if new username is available
 					var required = $inputs.filter('[required]');
@@ -213,7 +165,7 @@ angular.module('module.view.editProfile', [])
 					});
 					return true;
 				}
-				
+
 				function validatePassword(data) {
 					if (data.oldPassword !== $localStorage.password) {
 						$ionicPopup.show({
@@ -257,5 +209,5 @@ angular.module('module.view.editProfile', [])
 					}
 					return true;
 				}
-				
+
 });

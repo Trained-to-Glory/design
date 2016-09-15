@@ -1,8 +1,11 @@
 angular.module('service.engagements', [])
     .service('engagementService', function () {
         //check if user has already engaged with this item
-        var get = function(type, category, categoryId, itemId){
-          var arr = [type, category, categoryId, itemId];
+        var get = function(data){
+          if(data.userId && !data.itemId){
+            data.itemId = data.userId;
+          }
+          var arr = [data.type, data.category, data.categoryId, data.itemId];
           var db = firebase.database();
           //check type
           var refId = arr.join('/');
@@ -16,8 +19,12 @@ angular.module('service.engagements', [])
         });
       };
 
-        var engaged = function (type, category, categoryId, itemId) {
-            var arr = [type, category, categoryId, itemId];
+        var engaged = function (data) {
+          if(data.userId && !data.itemId){
+            data.itemId = data.userId;
+          }
+        //type, category, categoryId, itemId
+            var arr = [data.type, data.category, data.categoryId, data.itemId];
             var db = firebase.database();
             //check type
             var refId = arr.slice(0, 1).join('');
@@ -59,48 +66,57 @@ angular.module('service.engagements', [])
         };
 
         //returns true when engagement successfully registers in db, returns false otherwise.
-        var updateEngagement = function (type, category, categoryId, itemId, userId, comment, active, visible, actionable) {
+        var updateEngagement = function (data) {
+          if(data.userId && !data.itemId){
+            data.itemId = data.userId;
+          }
             //check if there has been this type of engagement on this item
             //if not create this item for the first time
-            return engaged(type, category, categoryId, itemId).then(function (exists) {
-                if (exists instanceof Array || exists === false || (userId && typeof (comment) === 'string')) {
+            //type, category, categoryId, itemId, userId, comment, active, visible, actionable
+            console.log(data);
+            return engaged(data).then(function (exists) {
+                if (exists instanceof Array || exists === false || (data.userId && typeof (data.comment) === 'string')) {
                     var len = exists instanceof Array ? exists.length : 0;
                     var final = {};
                     var obj = {
                         "created": firebase.database.ServerValue.TIMESTAMP,
                         "lastModified": firebase.database.ServerValue.TIMESTAMP,
                         "state": {
-                            "actionable": typeof(actionable) !== 'undefined'? (actionable) : true,
-                            "visible": typeof(visible) !== 'undefined'? (visible) : true,
-                            "active": typeof (active) !== 'undefined' ? (active) : true
+                            "actionable": typeof(data.actionable) !== 'undefined'? (data.actionable) : true,
+                            "visible": typeof(data.visible) !== 'undefined'? (data.visible) : true,
+                            "active": typeof (data.active) !== 'undefined' ? (data.active) : true
                         }
                     };
+                    if(data.extras){
+                      angular.extend(obj, data.extras);
+                      delete data.extras;
+                    }
                     var ref;
 
                     //comment type
-                    if (typeof (comment) === 'string' && len < 4) {
-                        obj.comment = comment;
-                        if (userId) {
-                            obj.userId = userId;
+                    if (typeof (data.comment) === 'string' && len < 4) {
+                        obj.comment = data.comment;
+                        if (data.userId) {
+                            obj.userId = data.userId;
                         }
                         refId = (len > 1) ? exists.join('/') : null;
                         refId = (len === 1) ? exists.join('') : refId;
 
                         if (exists === true || len === 3) {
-                            refId = [type, category, categoryId].join('/');
+                            refId = [data.type, data.category, data.categoryId].join('/');
                             return firebase.database().ref(refId).push(obj).key;
                         } else if (len === 0) {
                             //push
-                            final[type] = {};
-                            final[type][category] = {};
-                            final[type][category][categoryId] = { 'fakedata': 1 };
+                            final[data.type] = {};
+                            final[data.type][data.category] = {};
+                            final[data.type][data.category][data.categoryId] = { 'fakedata': 1 };
                         } else if (len == 1) {
                             //update
-                            final[category] = {};
-                            final[category][categoryId] = { 'fakedata': 1 };
+                            final[data.category] = {};
+                            final[data.category][data.categoryId] = { 'fakedata': 1 };
                         } else if (len == 2) {
                             //update
-                            final[categoryId] = {
+                            final[data.categoryId] = {
                                 'fakedata': 1
                             };
                         }
@@ -110,7 +126,7 @@ angular.module('service.engagements', [])
                         return db.update(final).then(function () {
                             //successfully saved
                             if (len < 3) {
-                                var refId = [type, category, categoryId].join('/');
+                                var refId = [data.type, data.category, data.categoryId].join('/');
                                 return firebase.database().ref(refId).push(obj).key;
                             }
 
@@ -123,19 +139,19 @@ angular.module('service.engagements', [])
 
                     } else {
                         if (len === 0) {
-                            final[type] = {};
-                            final[type][category] = {};
-                            final[type][category][categoryId] = {};
-                            final[type][category][categoryId][itemId] = obj;
+                            final[data.type] = {};
+                            final[data.type][data.category] = {};
+                            final[data.type][data.category][data.categoryId] = {};
+                            final[data.type][data.category][data.categoryId][data.itemId] = obj;
                         } else if (len == 1) {
-                            final[category] = {};
-                            final[category][categoryId] = {};
-                            final[category][categoryId][itemId] = obj;
+                            final[data.category] = {};
+                            final[data.category][data.categoryId] = {};
+                            final[data.category][data.categoryId][data.itemId] = obj;
                         } else if (len == 2) {
-                            final[categoryId] = {};
-                            final[categoryId][itemId] = obj;
+                            final[data.categoryId] = {};
+                            final[data.categoryId][data.itemId] = obj;
                         } else if (len == 3) {
-                            final[itemId] = obj;
+                            final[data.itemId] = obj;
                         } else if (len == 4) {
                             final = obj;
                         }
@@ -156,35 +172,41 @@ angular.module('service.engagements', [])
                 }
 
                 //if there is engagement just do an update
-                refId = type;
-                refId += category ? '/' + category : '';
-                refId += categoryId ? '/' + categoryId : '';
+                refId = data.type;
+                refId += data.category ? '/' + data.category : '';
+                refId += data.categoryId ? '/' + data.categoryId : '';
 
 
                 var db = firebase.database().ref(refId);
                 return db.once('value').then(function (snapshot) {
                     var prev = snapshot.val();
-                    if (prev && itemId in prev) {
-                        prev = prev[itemId];
+                    if (prev && data.itemId in prev) {
+                        prev = prev[data.itemId];
                     }
                     var final = {};
-                    final[itemId] = {
-                        "created": prev.created,
-                        "lastModified": firebase.database.ServerValue.TIMESTAMP,
-                        "state": {
-                            "actionable": typeof(actionable)!== 'undefined' ? actionable : prev.state.actionable,
-                            "visible": typeof(visible) !== 'undefined'? visible : prev.state.visible,
-                            "active": typeof (active) !== 'undefined' ? active : !prev.state.active
-                        }
-                    };
+                    final[data.itemId] = {};
 
-                    //comment type
-                    if (prev.comment && typeof (comment) === 'string') {
-                        final[itemId].comment = typeof (comment) === 'string' ? comment : prev.comment;
+                    if(data.extras){
+                      angular.extend(final[data.itemId], prev, data.extras);
+                      delete data.extras;
+                    }else if(prev){
+                      angular.extend(final[data.itemId], prev);
                     }
 
-                    if (userId && prev.userId) {
-                        final[itemId].userId = userId ? userId : prev.userId;
+                    final[data.itemId].created = prev.created;
+                    final[data.itemId].lastModified = firebase.database.ServerValue.TIMESTAMP;
+                    final[data.itemId].state = {};
+                    final[data.itemId].state.actionable = typeof(data.actionable)!== 'undefined' ? data.actionable : prev.state.actionable;
+                    final[data.itemId].state.visible = typeof(data.visible) !== 'undefined'? data.visible : prev.state.visible;
+                    final[data.itemId].state.active = typeof (data.active) !== 'undefined' ? data.active : !prev.state.active;
+
+                    //comment type
+                    if (prev.comment && typeof (data.comment) === 'string') {
+                        final[data.itemId].comment = typeof (data.comment) === 'string' ? data.comment : prev.comment;
+                    }
+
+                    if (data.userId && prev.userId) {
+                        final[data.itemId].userId = data.userId ? data.userId : prev.userId;
                     }
 
                     return db.update(final).then(function () {
@@ -199,53 +221,95 @@ angular.module('service.engagements', [])
         };
 
 
-        this.createComment = function (category, categoryId, userId, comment) {
-            var type = 'engagementComments';
+        this.createComment = function (data) {
+            data.type = 'engagementComments';
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, undefined, userId, comment);
+            return updateEngagement(data);
         };
 
-        this.create = function (category, categoryId, userId, comment) {
-            var type = 'engagementComments';
+        this.create = function (data) {
+            data.type = 'engagementComments';
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, undefined, userId, comment);
+            return updateEngagement(data);
         };
 
-        this.engagedActivities = function (category, categoryId, userId) {
-            var type = 'engagedActivities';
+        this.addAppointment = function (data){
+          data.extras= {
+            "notes": data.notes,
+            "startAt": data.startAt,
+            "allDay": data.allDay,
+            "title": data.title,
+            "phone": data.phone,
+            "endAt": data.endAt,
+            "location": data.location
+          };
+          data.type = "appointment";
+          data.active = true;
+          return updateEngagement(data);
+        };
+
+        this.removeAppointment = function (data){
+          data.type = "appointment";
+          data.active = false;
+          return updateEngagement(data);
+        };
+
+        this.engagedActivities = function (data) {
+            data.type = 'engagedActivities';
+            data.active = true;
             console.log('engagedActivities called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, true);
+            return updateEngagement(data);
         };
 
-        this.disEngagedActivities = function (category, categoryId, userId) {
-            var type = 'engagedActivities';
+        this.disEngagedActivities = function (data) {
+            data.type = 'engagedActivities';
+            data.active = false;
             console.log('disEngagedActivities called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, false);
+            return updateEngagement(data);
         };
 
-        this.updateComment = function (category, categoryId, itemId, comment) {
-            var type = 'engagementComments';
+        this.trainerActivities = function (data) {
+            data.type = 'trainerActivities';
+            data.active = true;
+            console.log('trainerActivities called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, itemId, undefined, comment);
+            return updateEngagement(data);
         };
-
-        this.deleteComment = function (category, categoryId, itemId) {
-            var type = 'engagementComments';
+        this.removeTrainerActivities = function (data) {
+            data.type = 'removeTrainerActivities';
+            data.active = false;
+            console.log('removeTrainerActivities called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, itemId, undefined, undefined, false, false, false);
+            return updateEngagement(data);
         };
 
-        this.getComments = function (category, categoryId, itemId) {
-            var type = 'engagementComments';
-            var refId = type;
+        this.updateComment = function (data) {
+            data.type = 'engagementComments';
+            //check if engagement item is already in hash
+            return updateEngagement(data);
+        };
+
+        this.deleteComment = function (data) {
+            data.type = 'engagementComments';
+            data.actionable = false;
+            data.active = false;
+            data.visible = false;
+            data.comment = undefined;
+            //check if engagement item is already in hash
+            return updateEngagement(data);
+        };
+
+        this.getComments = function (data) {
+            data.type = 'engagementComments';
+            var refId = data.type;
             //get all comments in category
-            refId += (category) ? '/' + category : '';
+            refId += (data.category) ? '/' + data.category : '';
             //get all comments for category Id
-            refId += (categoryId) ? '/' + categoryId : '';
+            refId += (data.categoryId) ? '/' + data.categoryId : '';
             //get all comments for itemId
-            refId += (itemId) ? '/' + itemId : '';
+            refId += (data.itemId) ? '/' + data.itemId : '';
 
             var comments = firebase.database().ref(refId);
             return comments.once('value').then(function (snapshot) {
@@ -257,21 +321,20 @@ angular.module('service.engagements', [])
             });
         };
 
-        this.getCommentsDynamic = function (category, categoryId, func) {
-            var type = 'engagementComments';
-            var refId = type;
+        this.getCommentsDynamic = function (data, func) {
+            data.type = 'engagementComments';
+            var refId = data.type;
             //get all comments in category
-            refId += (category) ? '/' + category : '';
+            refId += (data.category) ? '/' + data.category : '';
             //get all comments for category Id
-            refId += (categoryId) ? '/' + categoryId : '';
-
+            refId += (data.categoryId) ? '/' + data.categoryId : '';
 
             var comments = firebase.database().ref(refId);
             return comments.on('child_changed', func);
         };
 
-        this.totalComments = function(category, categoryId){
-          return this.getComments(category, categoryId).then(function(result){
+        this.totalComments = function(data){
+          return this.getComments(data.category, data.categoryId).then(function(result){
             var count = 0;
             if(result){
               for(var key in result){
@@ -282,27 +345,32 @@ angular.module('service.engagements', [])
           });
         };
 
-        this.liked = function (category, categoryId, userId) {
-            var type = 'engagementLikes';
-            var data = get(type, category, categoryId, userId);
+        this.liked = function (data) {
+            data.type = 'engagementLikes';
+            var data = get(data);
             //check if engagement item is already in hash
             return data.then(function(result){
-                return (result)?result.state.active: false;
+              if('state' in result){
+                return ((typeof(result.state.active)!=='undefined'))?result.state.active: false;
+              }else if(data.userId in result){
+                return ((typeof(result[data.userId].state.active)!=='undefined'))?result[data.userId].state.active: false;
+              }
+
             });
         };
 
 
-        this.likes = function(category, categoryId){
-          var type = 'engagementLikes';
-          var data = get(type, category, categoryId);
+        this.likes = function(data){
+          data.type = 'engagementLikes';
+          var data = get(data);
           //check if engagement item is already in hash
           return data.then(function(result){
               return result;
           });
         };
 
-        this.totalLikes = function(category, categoryId){
-          return this.likes(category, categoryId).then(function(result){
+        this.totalLikes = function(data){
+          return this.likes(data).then(function(result){
             var count = 0;
             if(result){
               for(var key in result){
@@ -313,46 +381,49 @@ angular.module('service.engagements', [])
           });
         };
 
-        this.like = function (category, categoryId, userId) {
-            var type = 'engagementLikes';
+        this.like = function (data) {
+            data.type = 'engagementLikes';
+            data.active = true;
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, true);
+            return updateEngagement(data);
         };
 
-        this.unlike = function (category, categoryId, userId) {
-            var type = 'engagementLikes';
+        this.unlike = function (data) {
+            data.type = 'engagementLikes';
+            data.active = false;
             console.log('unlike called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, false);
+            return updateEngagement(data);
         };
 
-        this.commit = function (category, categoryId, userId) {
-            var type = 'engagementCommits';
+        this.commit = function (data) {
+            data.type = 'engagementCommits';
+            data.active = true;
             console.log('commit called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, true);
+            return updateEngagement(data);
         };
 
-        this.committed = function (category, categoryId, userId) {
-            var type = 'engagementCommits';
-            var data = get(type, category, categoryId, userId);
+        this.committed = function (data) {
+            data.type = 'engagementCommits';
+            var data = get(data);
             //check if engagement item is already in hash
             return data.then(function(result){
-                return (result)?result.state.active: false;
+              return (typeof(result.state.active)!=='undefined')?result.state.active: false;
             });
         };
 
-        this.commits = function(category, categoryId){
-          var type = 'engagementLikes';
-          var data = get(type, category, categoryId);
+        this.commits = function(data){
+          data.type = 'engagementLikes';
+          var data = get(data);
           //check if engagement item is already in hash
           return data.then(function(result){
               return result;
           });
         };
 
-        this.totalCommits = function(category, categoryId){
-          return this.commits(category, categoryId).then(function(result){
+        this.totalCommits = function(data){
+          return this.commits(data).then(function(result){
             var count = 0;
             if(result){
               for(var key in result){
@@ -363,11 +434,12 @@ angular.module('service.engagements', [])
           });
         };
 
-        this.decommit = function (category, categoryId, userId) {
-            var type = 'engagementCommits';
+        this.decommit = function (data) {
+            data.type = 'engagementCommits';
+            data.active = false;
             console.log('uncommit called');
             //check if engagement item is already in hash
-            return updateEngagement(type, category, categoryId, userId, false);
+            return updateEngagement(data);
         };
 
     });

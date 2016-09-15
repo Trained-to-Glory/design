@@ -12,19 +12,31 @@ angular.module('service.post', [])
               });
         };
 
+        this.getPlans = function (plansId) {
+            var plans = (plansId) ? firebase.database().ref('plans/' + plansId) : firebase.database().ref('plans');
+            return plans.once('value').then(function (snapshot) {
+                  var currentObj = snapshot.val();
+                  if (currentObj) {
+                      return currentObj;
+                  }
+                  return undefined;
+              });
+        };
+
         this.create = function (data) {
             //create a location in the table
             var obj = {
                 // "typeId": data.postTypeId || '',
                 // "activityId": data.activityId || '',
                 // "imageFilePath": data.filePath || '',
+                "mustHaves": data.mustHaves || '',
                 "description": data.description,
                 "created": firebase.database.ServerValue.TIMESTAMP,
                 "createdBy": $localStorage.account.userId,
                 "owner": $localStorage.account.userName,
                 "location": data.location,
                 "time": data.time,
-                "date": data.date,
+                "date": data.date || '',
                 "postType": data.postType,
                 "state": {
                     "actionable": true,
@@ -36,6 +48,30 @@ angular.module('service.post', [])
             var posts = db.child('posts');
             var postsKey = posts.push(obj).key;
 
+
+            return postsKey;
+        };
+
+        this.createPlan = function (data) {
+            var obj = {
+                // "typeId": data.postTypeId || '',
+                // "activityId": data.activityId || '',
+                "title": data.title || '',
+                "photo": data.photo || '',
+                "notes": data.notes || '',
+                "description": data.description,
+                "created": firebase.database.ServerValue.TIMESTAMP,
+                "createdBy": $localStorage.account.userId,
+                "time": data.time,
+                "postType": data.postType,
+                "state": {
+                    "actionable": true,
+                    "visible": true,
+                    "active": true
+                }
+            };
+            var db = firebase.database().ref('plans');
+            var postsKey = db.push(obj).key;
             return postsKey;
         };
 
@@ -86,6 +122,10 @@ angular.module('service.post', [])
 
         this.getNews = function () {
             return this.get();
+        };
+
+        this.getSentPlans = function () {
+            return this.getPlans();
         };
 
         this.getRandomObject = function (arr) {

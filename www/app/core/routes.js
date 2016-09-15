@@ -291,6 +291,16 @@ angular.module('full_starter.routes', [])
         }
       })
 
+      .state('tabs.roleRather', {
+        url: '/roleRather',
+        views: {
+          'menuContent': {
+            templateUrl: 'app/shop/roleRather.html',
+            controller: 'roleRatherCtrl'
+          }
+        }
+      })
+
       .state('tabs.notifications', {
         url: '/notifications',
         views: {
@@ -347,6 +357,17 @@ angular.module('full_starter.routes', [])
           'menuContent': {
             templateUrl: 'app/news/event.html',
             controller: 'eventCtrl'
+          }
+        }
+      })
+
+      .state('tabs.create-plan', {
+        url: '/create-plan',
+        params: { plan: null },
+        views: {
+          'menuContent': {
+            templateUrl: 'app/dashboard/create-plan.html',
+            controller: 'createplanCtrl'
           }
         }
       })

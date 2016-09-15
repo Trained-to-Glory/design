@@ -23,9 +23,9 @@ angular.module('service.appointments', [])
                 "phone": data.phone,
                 "endAt": data.endAt,
                 "location": data.location,
+                "type": data.type,
                 "created": firebase.database.ServerValue.TIMESTAMP,
                 "createdBy": $localStorage.account.userId,
-                "type": data.type,
                 "state": {
                     "actionable": true,
                     "visible": true,

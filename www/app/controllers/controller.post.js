@@ -27,18 +27,22 @@ angular.module('module.view.post', [])
 
 			if($stateParams.post){
 				postService.get($stateParams.post).then(function(results) {
-					engagementService.totalLikes('post', $stateParams.post).then(function(totalLikes){
+					var data = {
+						category: 'post',
+						postId: $stateParams.post,
+					}
+					engagementService.totalLikes(data).then(function(totalLikes){
 						console.log({totalLikes: totalLikes});
 						results.totalLikes = totalLikes;
 					});
 
-					engagementService.totalComments('post', $stateParams.post).then(function(totalComments){
+					engagementService.totalComments(data).then(function(totalComments){
 						console.log({totalComments: totalComments});
 						results.totalComments = totalComments;
 						$scope.commentMode = !!totalComments;
 					});
 
-					engagementService.getCommentsDynamic('post', $stateParams.post, function(data){
+					engagementService.getCommentsDynamic(data, function(data){
 						console.log({added: data});
 					});
 
@@ -77,31 +81,36 @@ angular.module('module.view.post', [])
         	$state.go('tabs.friend');
         }
 
-       $scope.like = function (post) {
-            post.likes === undefined ? post.likes = [] : null;
-            if ($scope.liked == true) {
-                $scope.liked = false;
-                post.likes.splice(_.findIndex(post.likes, ['name', $localStorage.userName]));
-            } else {
-                $scope.liked = true;
-                post.likes.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
-            }
-        };
-
-        $scope.commit = function (post) {
-            post.commits === undefined ? post.commits = [] : null;
-            if ($scope.commited == true) {
-                $scope.commited = false;
-                post.commits.splice(_.findIndex(post.commits, ['name', $localStorage.userName]));
-            } else {
-                $scope.commited = true;
-                post.commits.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
-            }
-        };
+      //  $scope.like = function (post) {
+      //       post.likes === undefined ? post.likes = [] : null;
+      //       if ($scope.liked == true) {
+      //           $scope.liked = false;
+      //           post.likes.splice(_.findIndex(post.likes, ['name', $localStorage.userName]));
+      //       } else {
+      //           $scope.liked = true;
+      //           post.likes.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
+      //       }
+      //   };
+			 //
+      //   $scope.commit = function (post) {
+      //       post.commits === undefined ? post.commits = [] : null;
+      //       if ($scope.commited == true) {
+      //           $scope.commited = false;
+      //           post.commits.splice(_.findIndex(post.commits, ['name', $localStorage.userName]));
+      //       } else {
+      //           $scope.commited = true;
+      //           post.commits.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
+      //       }
+      //   };
 
 				$scope.createComment = function(category, categoryId,  commentText){
-					console.log({func:'createComment', category:category, categoryId: categoryId, comment: commentText});
-					return engagementService.createComment('event',categoryId, $localStorage.account.userId,commentText);
+					var data = {
+						category: 'event',
+						categoryId: categoryId,
+						userId: $localStorage.account.userId,
+						comment: commentText
+					}
+					return engagementService.createComment(data);
 				};
 
 

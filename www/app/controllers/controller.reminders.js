@@ -17,9 +17,6 @@ angular.module('module.view.reminders', [])
                         $state.go(ui_sref);
                     }
                 }
-
-				appointmentsService.get($stateParams)
-
         $scope.viewDate = new Date();
                 $scope.notifyTimes = ['at set time', '15 mins before', '30 mins before', '45 mins before', 'an hour before'];
                 $scope.notifications = appService.getNotifications();
@@ -85,7 +82,7 @@ angular.module('module.view.reminders', [])
                             $rootScope.notifications.splice($rootScope.notifications.indexOf(_.find($rootScope.notifications, function (obj) { return obj == $stateParams.reminder })), 1, $scope.reminder);
                         }
                     } else {
-                        appSersService.showAlert('Form Invalid', '<p class="text-center">A title and start date is required</p>', 'Ok', 'button-assertive', null);
+                        appService.showAlert('Form Invalid', '<p class="text-center">A title and start date is required</p>', 'Ok', 'button-assertive', null);
                     }
 
                 }

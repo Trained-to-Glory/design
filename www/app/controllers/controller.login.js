@@ -1,5 +1,5 @@
 angular.module('module.view.login', [])
-  .controller('loginCtrl', function ($scope, $rootScope, $state, $ionicModal, $ionicPush, postService, $ionicLoading,$firebaseAuth, $timeout, $ionicPush, $localStorage, Utils, $cordovaOauth, Popup, Social) {
+  .controller('loginCtrl', function ($scope, $rootScope, $state, $ionicModal, postService, $ionicLoading,$firebaseAuth, $timeout, $localStorage, Utils, $cordovaOauth, Popup, Social) {
     $scope.$on('$ionicView.enter', function () {
       //Clear the Login Form.
       $scope.user = {
@@ -49,7 +49,7 @@ angular.module('module.view.login', [])
 
     //Function to login to Firebase using email and password.
     loginWithFirebase = function (email, password) {
-    
+
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function (response) {
           //Retrieve the account from the Firebase Database
