@@ -1,12 +1,9 @@
 angular.module('module.view.editReminder', [])
-	.controller('editReminderCtrl', function($scope,$rootScope,$state,appService, $stateParams,$ionicModal, $localStorage, $ionicPopover,appointmentsService,engagementService) {
+	.controller('editReminderCtrl', function($scope,$rootScope,$state,appService,postService, $stateParams,$ionicModal, $localStorage, $ionicPopover,appointmentsService,engagementService) {
 		console.log($stateParams);
 		var appointmentType = $stateParams.type;
 		$scope.createReminder = function() {
 			var obj = {
-					category: appointmentType,
-					categoryId: $localStorage.account.userId,
-					userId: $localStorage.account.userId,
 					"notes": $scope.reminder.notes,
 					"startAt": Date.parse($scope.reminder.startsAt),
 					"allDay": $scope.reminder.allDay,
@@ -17,7 +14,7 @@ angular.module('module.view.editReminder', [])
 					"type": $stateParams.type
 			};
 			console.log(obj);
-			var key = engagementService.addAppointment(obj);
+			var key = postService.createAppointment(obj);
 			console.log('key', key);
 			$state.go('tabs.reminders');
 		};

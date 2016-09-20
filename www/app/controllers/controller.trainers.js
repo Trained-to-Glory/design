@@ -17,10 +17,10 @@ angular.module('module.view.trainers', [])
                         $state.go(ui_sref);
                     }
                 }
-                
+
 		$scope.gotoLeader = function () {
                     $state.go('tabs.leader');
-           
+
         };
 
         $scope.contacts = partnersService.getContacts();

@@ -1,20 +1,21 @@
-angular.module('module.view.createPlan', [])
-	.controller('createplanCtrl', function($scope,$rootScope,$state,$localStorage, $cordovaCamera, appService, postService, $ionicActionSheet) {
+angular.module('module.view.regular', [])
+	.controller('regularCtrl', function($scope,$rootScope,$state,$localStorage, postService, $ionicActionSheet, $cordovaCamera, appService) {
     $scope.profile = $localStorage.account;
 
-		$scope.createPlan = function() {
+
+		$scope.createPost = function() {
 			var $inputs = $('.event-form .event__input input');
 			var data = {};
 			$inputs.map( function(elm) {
 				data[$(this).attr('name')] = $(this).val();
 			});
-			data.postType = 'plan';
-      data.photo = $scope.photo;
-			var key = postService.createPlan(data);
-			$state.go('tabs.sentPlans');
+			data.postType = 'post';
+			data.photo = $scope.photo;
+			var key = postService.create(data);
+			$state.go('tabs.news');
 		};
 
-    $scope.uploadPlanPhoto = function () {
+		$scope.uploadEventPhoto = function () {
           $ionicActionSheet.show({
               buttons: [{
                   text: 'Take Picture'
@@ -29,7 +30,7 @@ angular.module('module.view.createPlan', [])
                               $cordovaCamera.getPicture(appService.getCameraOptions()).then(function (imageData) {
                                   //alert(imageData);
                                   $scope.photo = "data:image/jpeg;base64," + imageData;
-                            			var key = postService.createPlan($scope.photo);
+                            			var key = postService.create($scope.photo);
                               }, function (err) {
                                   appService.showAlert('Error', err, 'Close', 'button-assertive', null);
                               });
@@ -40,7 +41,7 @@ angular.module('module.view.createPlan', [])
                           document.addEventListener("deviceready", function () {
                               $cordovaCamera.getPicture(appService.getLibraryOptions()).then(function (imageData) {
                                 $scope.photo = "data:image/jpeg;base64," + imageData;
-                                var key = postService.createPlan($scope.photo);
+                                var key = postService.create($scope.photo);
                               }, function (err) {
                                   appService.showAlert('Error', err, 'Close', 'button-assertive', null);
                               });
@@ -51,6 +52,5 @@ angular.module('module.view.createPlan', [])
               }
           });
       };
-
 
 });

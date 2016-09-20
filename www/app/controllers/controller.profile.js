@@ -1,6 +1,10 @@
 angular.module('module.view.profile', [])
-	.controller('profileCtrl', function($scope,$rootScope,$state,postService,partnersService,userInterestService, $localStorage) {
+	.controller('profileCtrl', function($scope,$rootScope,$state,postService,partnersService,$ionicSideMenuDelegate,userInterestService, $localStorage) {
  	userInterestService.createInterestList();
+
+	$scope.toggleLeft = function() {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
 
 		$scope.goBack = function (ui_sref) {
 	                    var currentView = $ionicHistory.currentView();

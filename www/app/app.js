@@ -1,5 +1,5 @@
 
-angular.module('full_starter', ['ionic','ngStorage', 'ngCordovaOauth', 'ngCordova', 'full_starter.controllers', 'full_starter.routes', 'full_starter.services', 'full_starter.directives','full_starter.factory'])
+angular.module('full_starter', ['ionic','ngStorage','ngCordovaOauth', 'ngCordova', 'full_starter.controllers', 'full_starter.routes', 'full_starter.services', 'full_starter.directives','full_starter.factory'])
 
   //Constants for the Popup messages
   //For the icons, refer to http://ionicons.com for all icons.
@@ -43,6 +43,12 @@ angular.module('full_starter', ['ionic','ngStorage', 'ngCordovaOauth', 'ngCordov
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+      var push = new Ionic.Push({
+        "debug": true
+      });
 
+      push.register(function(token){
+        console.log("Device token:", token.token);
+      });
     });
   })

@@ -1,5 +1,24 @@
 angular.module('module.view.reminders', [])
-	.controller('remindersCtrl', function($scope,$rootScope,$state,appService,$ionicPopover,$ionicModal) {
+	.controller('remindersCtrl', function($scope,postService, $rootScope,$state,$ionicPopover,$ionicModal,appService,engagementService,$localStorage) {
+  //on page load
+	//make any base data calls to pre-populate
+	// engagementService.viewAppointments({userId: $localStorage.account.userId}).then(function(results){
+	// 	console.log(results);
+	// 		if(results){
+	// 			var appointments = {};
+	// 			$scope.appointments = results;
+	// 		}
+	//
+	// });
+
+	postService.getSentPlans().then(function(results) {
+		$scope.reminders = {
+				items: results
+		};
+		console.log($scope.reminders);
+	});
+
+
 		$scope.goBack = function (ui_sref) {
                     var currentView = $ionicHistory.currentView();
                     var backView = $ionicHistory.backView();
@@ -16,7 +35,10 @@ angular.module('module.view.reminders', [])
                     } else {
                         $state.go(ui_sref);
                     }
-                }
+                };
+
+
+
         $scope.viewDate = new Date();
                 $scope.notifyTimes = ['at set time', '15 mins before', '30 mins before', '45 mins before', 'an hour before'];
                 $scope.notifications = appService.getNotifications();

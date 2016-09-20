@@ -22,9 +22,11 @@
         'module.view.match',
         'module.view.cost',
         'module.view.createPlan',
+        'module.view.regular',
         'module.view.event',
         'module.view.contacts',
         'module.view.friend',
+        'module.view.sidemenu',
         'module.view.coach',
         'module.view.trainers',
         'module.view.plans',
@@ -147,6 +149,8 @@
 
                 }
             }
+
+
             // intro
             function initIntro() {
 

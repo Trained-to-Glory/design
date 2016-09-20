@@ -10,7 +10,7 @@
             <div ng-if="news.type === 'image'">
                 <div class="card image" ng-repeat="(key, value) in news.items" ng-if="value.state.visible === true">
                     <div class="item item-image">
-                        <img ng-src="{{post.image}}">
+                        <img ng-src="{{value.photo}}">
                         <div class="item item-avatar" ui-sref="tabs.post-detail({plan:key})">
                             <img ng-src="{{value.photo}}">
                             <h2>{{value.title}}</h2>

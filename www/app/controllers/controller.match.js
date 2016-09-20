@@ -1,5 +1,6 @@
 angular.module('module.view.match', [])
-	.controller('matchCtrl', function($scope,$rootScope,$state) {
+	.controller('matchCtrl', function($scope,$rootScope,$state,interestService) {
+
 		 $scope.goBack = function (ui_sref) {
                     var currentView = $ionicHistory.currentView();
                     var backView = $ionicHistory.backView();
@@ -18,24 +19,49 @@ angular.module('module.view.match', [])
                     }
           }
 
+					$scope.getInterest = function(id){
+						return interestService.get(id);
+					};
+
+					$scope.getInterest().then(function(results) {
+						var interests = [];
+						for (key in results){
+							interests.push({
+								id: key,
+								label: results[key].displayName,
+								photo: results[key].backgroundImg,
+								icon: results[key].icon
+							});
+						}
+						console.log({data: interests});
+						$scope.abs = interests;
+					}, function(error){
+						console.log(error);
+					}).catch(function(error){
+						console.log('catch');
+						console.log(error);
+					});
+
+		window.interestService = interestService;
+		
 		 $scope.gotoBrowse = function () {
                     $state.go('tabs.news');
-                   
+
         };
 
        $scope.gotoAccount = function () {
                     $state.go('tabs.account');
-                   
+
         };
 
         $scope.gotoCoaches = function () {
                     $state.go('tabs.coach');
-           
+
         };
 
         $scope.gotoContacts = function () {
                     $state.go('tabs.contacts');
-           
+
         };
 
 

@@ -1,7 +1,6 @@
 angular.module('module.view.rather', [])
 	.controller('ratherCtrl', function($scope,$rootScope,$state,interestService,userInterestService,$localStorage, engagementService) {
 		$scope.data = {};
-		interestService.createInterestList();
 		console.log('prevScope', $state.prevScope);
 		$scope.data.editProfile = $state.prevScope == 'user' ? true : false;
 
@@ -41,19 +40,22 @@ angular.module('module.view.rather', [])
 			$scope.isChecked = false;
 		    $scope.selected = [];
 		    $scope.checkedOrNot = function (interest, isChecked, index) {
+						console.log('selected hit');
+						console.log('args',arguments);
 		        if (isChecked) {
 		            $scope.selected.push(interest);
-								var data = {
-	                category: 'interest',
-	                interestId: interest.id,
-	                userId: $localStorage.account.userId
-	              }
-								engagementService.engagedActivities(data);
+								engagementService.engagedActivities('interest', interest.id, $localStorage.account.userId);
+								console.log($scope.selected.push);
+								console.log(interest);
 		        } else {
 		            var _index = $scope.selected.indexOf(interest);
 		            $scope.selected.splice(_index, 1);
-								engagementService.disEngagedActivities(data);
+								engagementService.disEngagedActivities('interest', interest.id, $localStorage.account.userId);
 		        }
+						console.log($scope.selected);
+						console.log('the value of: ', interest);
+						//$scope.selected.push($localStorage.account);
+
 		    };
 
 

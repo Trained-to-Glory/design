@@ -1,20 +1,8 @@
 angular.module('module.view.news', [])
-    .controller('newsCtrl', function ($scope, $rootScope, $state, $cordovaCamera, $localStorage, $ionicActionSheet, $ionicSideMenuDelegate, $ionicPopover, engagementService, postService, appService, conversationService, appointmentsService) {
+    .controller('newsCtrl', function ($scope, $rootScope, $state, postService, appService, $cordovaCamera, $localStorage, $ionicActionSheet, conversationService, $ionicSideMenuDelegate, $ionicPopover, engagementService) {
 
-        var publicServices = {
-            'post': true,
-            'engagement': true,
-            'appointments': true
-        }
-
-        //for dev purposes only. remove when done
-        for (var key in publicServices) {
-            if (publicServices[key]) {
-                $scope[key + 'Service'] = eval(key + 'Service');
-                window[key + 'Service'] = $scope[key + 'Service'];
-            }
-        }
-
+        $scope.postService = postService;
+        window.postService = $scope.postService;
         $scope.goBack = function (ui_sref) {
             var currentView = $ionicHistory.currentView();
             var backView = $ionicHistory.backView();
@@ -33,55 +21,8 @@ angular.module('module.view.news', [])
             }
         }
 
-        $scope.sendPhoto = function () {
-            var message = {
-                sentAt: new Date(),
-                name: $localStorage.userName,
-                photo: $localStorage.userPhoto,
-                senderid: $localStorage.account.userId
-            };
-            $ionicActionSheet.show({
-                buttons: [{
-                    text: 'Take Picture'
-                }, {
-                        text: 'Select From Gallery'
-                    }],
-                buttonClicked: function (index) {
-                    switch (index) {
-                        case 0: // Take Picture
-                            document.addEventListener("deviceready", function () {
-                                $cordovaCamera.getPicture(appService.getCameraOptions()).then(function (imageData) {
-                                    message.text = '<img src="' + "data:image/jpeg;base64," + imageData + '" style="max-width: 300px">';
-                                    $timeout(function () {
-                                        $scope.chat.messages.push(message);
-                                        viewScroll.scrollBottom(true);
-                                    }, 0);
-                                }, function (err) {
-                                    appService.showAlert('Error', err, 'Close', 'button-assertive', null);
-                                });
-                            }, false);
-                            break;
-                        case 1: // Select From Gallery
-                            document.addEventListener("deviceready", function () {
-                                $cordovaCamera.getPicture(appService.getLibraryOptions()).then(function (imageData) {
-                                    message.text = '<img src="' + "data:image/jpeg;base64," + imageData + '" style="width: 500px;height:500px">';
-                                    $timeout(function () {
-                                        $scope.chat.messages.push(message);
-                                        viewScroll.scrollBottom(true);
-                                    }, 0);
-                                }, function (err) {
-                                    appService.showAlert('Error', err, 'Close', 'button-assertive', null);
-                                });
-                            }, false);
-                            break;
-                    }
-                    return true;
-                }
-            });
-        };
-
-        $scope.createPost = function () {
-            $state.go('tabs.event');
+        $scope.createPost = function() {
+          $state.go('tabs.event');
         };
 
         $scope.gotoExplore = function () {
@@ -101,44 +42,7 @@ angular.module('module.view.news', [])
 
         $scope.gotoCoaches = function () {
             $state.go('tabs.coach');
-        };
 
-        $scope.toggleLike = function(postId, userId){
-          var posts = $scope.news.items;
-          if(postId in posts){
-            var post = $scope.news.items[postId];
-            var actionable = post.state.actionable;
-            if(actionable){
-              post.liked = !post.liked;
-              var state = (post.liked)?'like':'unlike';
-              var data = {
-                category: 'post',
-                categoryId: postId,
-                userId: $localStorage.account.userId
-              }
-              return engagementService[state](data);
-            }
-          }
-            return false;
-        };
-
-        $scope.toggleCommit = function(postId, userId){
-          var posts = $scope.news.items;
-          if(postId in posts){
-            var post = $scope.news.items[postId];
-            var actionable = post.state.actionable;
-            if(actionable){
-              post.committed = !post.committed;
-              var state = (post.committed)?'commit':'decommit';
-              var data = {
-                category: 'post',
-                categoryId: postId,
-                userId: $localStorage.account.userId
-              }
-              return engagementService[state](data);
-            }
-          }
-            return false;
         };
 
         $scope.newsPopover = $ionicPopover.fromTemplate(newsTemplate, {
@@ -147,55 +51,26 @@ angular.module('module.view.news', [])
 
         $ionicSideMenuDelegate.canDragContent(false);
 
-        $scope.delete = function (id) {
-            return postService.delete(id);
+        $scope.delete = function(id){
+          return postService.delete(id);
         };
 
-        $scope.select = function(id){
-            return userInterestService.select(id);
+
+        $scope.update = function (data){
+          return postService.update(data);
         };
 
-        $scope.update = function (data) {
-            return postService.update(data);
-        };
-
-        $scope.event = function () {
-
+        $scope.event = function (){
             $state.go('tabs.event');
         };
 
         postService.getNews().then(function(results) {
-          //create a local object so we can create the datastructure we want
-          //so we can use it to show/hide, toggle ui items
-          var news = {
+          $scope.news = {
               type: 'image',
               items: results
           };
-          console.log('results',results);
-          var data;
-          console.log(news);
-          for(var id in news.items){
-            //check to see if there is a like on this post
-            //console.log({postId: engagementService.liked('post', id, $localStorage.account.userId)});
-            data = {
-              category: 'post',
-              categoryId: id,
-              userId: $localStorage.account.userId
-            }
-            engagementService.liked(data).then(function(liked){
-              news.items[id].liked = liked;
-            });
-            engagementService.committed(data).then(function(committed){
-              news.items[id].committed = committed;
-            });
-            engagementService.totalCommits(data).then(function(totalCommits){
-              news.items[id].totalCommits = totalCommits;
-            });
-          }
-          //make it available to the directive to officially show/hide, toggle
-          $scope.news = news;
+          console.log($scope.news);
         });
-
     });
 
 var newsTemplate =

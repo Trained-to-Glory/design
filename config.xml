@@ -27,6 +27,14 @@
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
+    <!-- for iOS -->
+    <feature name="SocialSharing">
+      <param name="ios-package" value="SocialSharing" />
+    </feature>
+    <!-- for Android (you will find one in res/xml) -->
+    <feature name="SocialSharing">
+      <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
+    </feature>
     <platform name="ios">
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
@@ -89,6 +97,7 @@
     <plugin name="cordova-plugin-contacts" />
     <plugin name="cordova-plugin-device" />
     <plugin name="cordova-plugin-device-motion" />
+    <plugin name="cordova-plugin-x-socialsharing" source="npm" />
     <plugin name="cordova-plugin-device-orientation" />
     <plugin name="cordova-plugin-dialogs" />
     <plugin name="cordova-plugin-file" />
@@ -100,5 +109,4 @@
     <plugin name="cordova-plugin-network-information" />
     <plugin name="cordova-plugin-splashscreen" />
     <plugin name="cordova-plugin-vibration" />
-    <variable name="SENDER_ID" value="778952668094" />
 </widget>

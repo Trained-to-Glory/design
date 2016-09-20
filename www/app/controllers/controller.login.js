@@ -61,7 +61,6 @@ angular.module('module.view.login', [])
                 Utils.hide();
                 firebase.database().ref('accounts/' + account.key).on('value', function (response) {
                   var account = response.val();
-
                   $localStorage.account = account;
                 });
                 $state.go('tabs.news');
@@ -138,30 +137,6 @@ angular.module('module.view.login', [])
           break;
       }
     };
-
-    // var provider = new firebase.auth.GoogleAuthProvider();
-    // firebase.auth().signInWithRedirect(provider);
-    //
-    // firebase.auth().getRedirectResult().then(function(result) {
-    //
-    //   if (result.credential) {
-    //     // This gives you a Google Access Token. You can use it to access the Google API.
-    //     var token = result.credential.accessToken;
-    //     // ...
-    //   }
-    //   // The signed-in user info.
-    //   var user = result.user;
-    //   $state.go('tabs.news');
-    // }).catch(function(error) {
-    //   // Handle Errors here.
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // The email of the user's account used.
-    //   var email = error.email;
-    //   // The firebase.auth.AuthCredential type that was used.
-    //   var credential = error.credential;
-    //   // ...
-    // });
 
     //Shows the error popup message when using the Social Login with Firebase.
     showSocialLoginError = function (errorCode) {

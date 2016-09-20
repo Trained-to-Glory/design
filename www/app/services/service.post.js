@@ -29,6 +29,7 @@ angular.module('service.post', [])
                 // "typeId": data.postTypeId || '',
                 // "activityId": data.activityId || '',
                 // "imageFilePath": data.filePath || '',
+                "photo": data.photo || '',
                 "mustHaves": data.mustHaves || '',
                 "description": data.description,
                 "created": firebase.database.ServerValue.TIMESTAMP,
@@ -75,28 +76,48 @@ angular.module('service.post', [])
             return postsKey;
         };
 
-        this.update = function (data) {
+        this.createAppointment = function (data) {
+            var obj = {
+                // "typeId": data.postTypeId || '',
+                // "activityId": data.activityId || '',
+                "title": data.title || '',
+                "phone": data.phone || '',
+                "notes": data.notes || '',
+                "startAt": data.startAt || '',
+                "endAt": data.endAt || '',
+                "allDay": data.allDay || '',
+                "location": data.location || '',
+                "created": firebase.database.ServerValue.TIMESTAMP,
+                "createdBy": $localStorage.account.userId,
+                "type": data.type,
+                "state": {
+                    "actionable": true,
+                    "visible": true,
+                    "active": true
+                }
+            };
+            var db = firebase.database().ref('appointments');
+            var postsKey = db.push(obj).key;
+            return postsKey;
+        };
+
+        this.update = function (data, postId) {
             var posts = firebase.database().ref('posts/' + postId);
             return posts.once('value').then(function (snapshot) {
                 var currentObj = snapshot.val();
                 if (currentObj) {
                     var obj = {
-                        "typeId": data.postTypeId ? data.postTypeId : currentObj.postTypeId,
-                        "activityId": data.activityId ? data.activityId : currentObj.activityId,
+                        // "photo": data.photo ? data.photo : currentObj.photo,
+                        // "mustHaves": data.mustHaves ? data.mustHaves : currentObj.mustHaves,
                         "description": data.description ? data.description : currentObj.description,
                         "location": data.location ? data.location : currentObj.location,
-                        "filePath": data.filePath ? data.filePath : currentObj.filePath,
+                        "owner": data.owner ? data.owner : currentObj.owner,
                         "time": data.time ? data.time : currentObj.time,
                         "date": data.date ? data.date : currentObj.date,
                         "postType": data.postType ? data.postType : currentObj.postType,
                         "created": data.created ? data.created : currentObj.created,
                         "lastModified": firebase.database.ServerValue.TIMESTAMP,
-                        "createdBy": data.createdBy ? data.createdBy : currentObj.createdBy,
-                        "state": {
-                            "actionable": actionable ? actionable : currentObj.actionable,
-                            "visible": visible ? visible : currentObj.visible,
-                            "active": active ? active : currentObj.active
-                        }
+                        "createdBy": data.createdBy ? data.createdBy : currentObj.createdBy
                     };
                     return posts.update(obj);
                 }

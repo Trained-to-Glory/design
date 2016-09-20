@@ -36,9 +36,9 @@ angular.module('full_starter.routes', [])
     $stateProvider
       .state('tabs', {
         url: '/tabs',
-        templateUrl: 'app/core/sidemenu.html',
         abstract: true,
-        controller: 'settingsCtrl'
+        templateUrl: 'app/core/sidemenu.html',
+        controller: 'sidemenuCtrl'
       })
 
       .state('tabs.news', {
@@ -93,7 +93,7 @@ angular.module('full_starter.routes', [])
 
       .state('tabs.post-detail', {
         url: '/post-detail',
-        params: { post: null },
+        params: { post: null, mode: null },
         views: {
           'menuContent': {
             templateUrl: 'app/news/post.html',
@@ -353,10 +353,21 @@ angular.module('full_starter.routes', [])
 
       .state('tabs.event', {
         url: '/event',
+        params: { post: null, mode: null },
         views: {
           'menuContent': {
             templateUrl: 'app/news/event.html',
             controller: 'eventCtrl'
+          }
+        }
+      })
+
+      .state('tabs.regular', {
+        url: '/regular',
+        views: {
+          'menuContent': {
+            templateUrl: 'app/news/regular.html',
+            controller: 'regularCtrl'
           }
         }
       })

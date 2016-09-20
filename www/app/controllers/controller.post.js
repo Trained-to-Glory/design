@@ -1,5 +1,5 @@
 angular.module('module.view.post', [])
-	.controller('postCtrl', function($scope,$rootScope,$state,postService,$localStorage, $cordovaSocialSharing, $ionicHistory,$ionicPopup,$cordovaSocialSharing,postService,engagementService,$stateParams) {
+	.controller('postCtrl', function($scope,$rootScope,$state,postService,$localStorage, appService, $cordovaSocialSharing, $ionicHistory,$ionicPopup,$cordovaSocialSharing,postService,engagementService,$stateParams) {
 		console.log($stateParams);
 
 		$scope.postId = $stateParams.post;
@@ -29,7 +29,7 @@ angular.module('module.view.post', [])
 				postService.get($stateParams.post).then(function(results) {
 					var data = {
 						category: 'post',
-						postId: $stateParams.post,
+						postId: $stateParams.post
 					}
 					engagementService.totalLikes(data).then(function(totalLikes){
 						console.log({totalLikes: totalLikes});
@@ -51,16 +51,16 @@ angular.module('module.view.post', [])
 			}
 
 		if ($state.is('tabs.post-detail') || $state.is('tabs.commits') || $state.is('tabs.comments') || $state.is('tabs.likes')) {
-                    $stateParams.post === null ? $scope.post = postService.getPost() : $scope.post = $stateParams.post;
-        }
+      	$stateParams.post === null ? $scope.post = postService.getPost() : $scope.post = $stateParams.post;
+      }
 
         $scope.share = function (post) {
             document.addEventListener("deviceready", function () {
                 $cordovaSocialSharing.share(post.description, post.owner, post.location)
                     .then(function (result) {
-                        postService.showAlert('Post Shared', result, 'Ok', 'button-balanced', null);
+                        appService.showAlert('Post Shared', result, 'Ok', 'button-balanced', null);
                     }, function (err) {
-                        postService.showAlert('Error Occured', err, 'Ok', 'button-assertive', null);
+                        appService.showAlert('Error Occured', err, 'Ok', 'button-assertive', null);
                     });
             }, false);
         }
@@ -81,28 +81,6 @@ angular.module('module.view.post', [])
         	$state.go('tabs.friend');
         }
 
-      //  $scope.like = function (post) {
-      //       post.likes === undefined ? post.likes = [] : null;
-      //       if ($scope.liked == true) {
-      //           $scope.liked = false;
-      //           post.likes.splice(_.findIndex(post.likes, ['name', $localStorage.userName]));
-      //       } else {
-      //           $scope.liked = true;
-      //           post.likes.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
-      //       }
-      //   };
-			 //
-      //   $scope.commit = function (post) {
-      //       post.commits === undefined ? post.commits = [] : null;
-      //       if ($scope.commited == true) {
-      //           $scope.commited = false;
-      //           post.commits.splice(_.findIndex(post.commits, ['name', $localStorage.userName]));
-      //       } else {
-      //           $scope.commited = true;
-      //           post.commits.push({ name: $localStorage.userName, photo: $localStorage.userPhoto, publishedDate: new Date() });
-      //       }
-      //   };
-
 				$scope.createComment = function(category, categoryId,  commentText){
 					var data = {
 						category: 'event',
@@ -112,7 +90,6 @@ angular.module('module.view.post', [])
 					}
 					return engagementService.createComment(data);
 				};
-
 
 				$scope.activateCommentMode = function(){
 					$scope.commentMode = true;

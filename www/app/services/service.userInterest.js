@@ -34,8 +34,8 @@ angular.module('service.userInterest', [])
 
     this.select = function(id){
       console.log('in select interest');
-      var userIntresets = firebase.database().ref('userInterest/' + id);
-      userInterest.push();
+      var userInterests = firebase.database().ref('userInterest/' + id);
+      userInterests.push();
     };
 
 });

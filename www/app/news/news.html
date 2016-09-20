@@ -26,6 +26,7 @@
                             <i class="icon ion-heart" ng-class="{'calm': value.liked, 'light': !value.liked }" ng-click="toggleLike(key, userId)"> {{value.totalLikes}}</i>
                             <i class="icon ion-ios-chatbubble light"> {{post.comments.length}}</i>
                         </span>
+                        <img ng-src="{{value.photo}}">
                         <div class="item item-avatar" ui-sref="tabs.post-detail({post:key})">
                             <img ng-src="{{post.sourceLogo}}">
                             <h2>{{value.owner}}</h2>
